@@ -48,10 +48,15 @@ let sectors = [
  */
 
 const fileTemplate = '{"Header":{"WKitJsonVersion":"0.0.7","DataType":"CR2W"},"Data":{"Version":195,"BuildVersion":0,"RootChunk":{},"EmbeddedFiles":[]}}';
-
-const jsonExtensions = [".app", ".ent", ".streamingsector"];
-const exportExtensions = [".mesh"];
-const exportEmbeddedExtensions = [".mesh"];
+if (withmats){
+    const jsonExtensions = [".app", ".ent", ".mi", ".mt", ".streamingsector"];
+    const exportExtensions = [".mesh", ".xbm"];
+    const exportEmbeddedExtensions = [".mesh", ".xbm", ".mlmask"];
+} else {
+    const jsonExtensions = [".app", ".ent", ".streamingsector"];
+    const exportExtensions = [".mesh"];
+    const exportEmbeddedExtensions = [".mesh"];
+}
 
 const sectorPathInFiles = 'base\\worlds\\03_night_city\\_compiled\\default';
 for (let i = 0; i < sectors.length; i += 1) {
