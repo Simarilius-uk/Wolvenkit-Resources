@@ -3,13 +3,16 @@
 // @version 1.2
 import * as Logger from 'Logger.wscript';
 import * as TypeHelper from 'TypeHelper.wscript';
-import * as Export_Mesh from 'Export_Mesh.wscript';
+import * as Collision_Shapes from 'collision_shapes.wscript';
 
 // Export all sectors in project? (set to false to only use sectors list below)
 const add_from_project = true;
 
 // Set to true to disable warnings about failed meshes
 const suppressLogFileOutput = false;
+
+const withmats=false
+
 
 /**
  * Any sectors in the list below will be added to your project before exporting. List of sector files to add to your project, see wiki: https://tinyurl.com/cyberpunk2077worldsectors
@@ -21,7 +24,7 @@ let sectors = [
     // 'interior_-22_19_1_1', 'interior_-22_20_1_1', 'interior_-43_39_3_0', 'interior_-44_39_3_0', 'interior_-44_40_3_0', 'interior_-46_40_3_0', 'exterior_-22_19_1_0', 'quest_b705140105a75f58', 'quest_acd280b2b73c4d5b', 'quest_2467054678ccf8f6', 'quest_3509076113f76078', 'quest_e1ef450702659584', 'quest_2be595b225125038', 'quest_5eb84e72f3942283', 'quest_e1ef450702659584', 'quest_1fbb2ceaeeaac973',
 
     /* V's apartment: Loft */
-    // 'exterior_-24_-16_1_0', 'interior_-24_-16_1_1', 'interior_-48_-31_2_0', 'quest_ca115e9713d725d7',
+     'exterior_-24_-16_1_0', 'interior_-24_-16_1_1', 'interior_-48_-31_2_0', 'quest_ca115e9713d725d7'
 
     /* V's apartment: Northside dump */
     // 'exterior_-24_34_0_0', 'interior_-48_68_0_0', 'interior_-12_17_0_2', 'exterior_-12_17_0_1', 'interior_-47_69_0_0', 'interior_-48_69_0_0',
@@ -45,9 +48,9 @@ let sectors = [
 
 const fileTemplate = '{"Header":{"WKitJsonVersion":"0.0.7","DataType":"CR2W"},"Data":{"Version":195,"BuildVersion":0,"RootChunk":{},"EmbeddedFiles":[]}}';
 
-const jsonExtensions = [".app", ".ent", ".mi", ".mt", ".streamingsector"];
-const exportExtensions = [".mesh", ".xbm"];
-const exportEmbeddedExtensions = [".mesh", ".xbm", ".mlmask"];
+const jsonExtensions = [".app", ".ent", ".streamingsector"];
+const exportExtensions = [".mesh"];
+const exportEmbeddedExtensions = [".mesh"];
 
 const sectorPathInFiles = 'base\\worlds\\03_night_city\\_compiled\\default';
 for (let i = 0; i < sectors.length; i += 1) {
@@ -102,10 +105,12 @@ for (const fileName of projectSet) {
     }
 }
 
+let exportsettings = {Mesh: { ExportType: "MeshOnly", WithMaterials: withmats, ImageType: "png", LodFilter: true, Binary: true}}
+
+
 // export all of our files with the default export settings
 Logger.Info(`Exporting ${exportSet.size} files...`);
-wkit.ExportFiles([...exportSet]);
-
+wkit.ExportFiles([...exportSet], exportsettings);
 Logger.Success("======================================\nSector export finished!\n\n")
 
 //#region helper_functions
@@ -200,6 +205,9 @@ function ParseFile(fileName, parentFile) {
         let json = TypeHelper.JsonParse(wkit.GameFileToJson(file));
         for (let path of GetPaths(json["Data"]["RootChunk"])) {
             ParseFile(path, json);
+        }
+        if (file.Extension !== ".streamingsector") {
+        Collision_Shapes.Export_Sector_Collisions(json);
         }
     }
 }
