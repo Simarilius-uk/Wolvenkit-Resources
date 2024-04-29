@@ -13,7 +13,9 @@ const suppressLogFileOutput = false;
 
 // If you dont want mats then set this to false
 const withmats=true
-
+let jsonExtensions = [".app", ".ent", ".mi", ".mt", ".streamingsector"];
+let exportExtensions = [".mesh", ".xbm"];
+let exportEmbeddedExtensions = [".mesh", ".xbm", ".mlmask"];
 
 /**
  * Any sectors in the list below will be added to your project before exporting. List of sector files to add to your project, see wiki: https://tinyurl.com/cyberpunk2077worldsectors
@@ -48,14 +50,10 @@ let sectors = [
  */
 
 const fileTemplate = '{"Header":{"WKitJsonVersion":"0.0.7","DataType":"CR2W"},"Data":{"Version":195,"BuildVersion":0,"RootChunk":{},"EmbeddedFiles":[]}}';
-if (withmats){
-    const jsonExtensions = [".app", ".ent", ".mi", ".mt", ".streamingsector"];
-    const exportExtensions = [".mesh", ".xbm"];
-    const exportEmbeddedExtensions = [".mesh", ".xbm", ".mlmask"];
-} else {
-    const jsonExtensions = [".app", ".ent", ".streamingsector"];
-    const exportExtensions = [".mesh"];
-    const exportEmbeddedExtensions = [".mesh"];
+if (!withmats){
+     jsonExtensions = [".app", ".ent", ".streamingsector"];
+     exportExtensions = [".mesh"];
+     exportEmbeddedExtensions = [".mesh"];
 }
 
 const sectorPathInFiles = 'base\\worlds\\03_night_city\\_compiled\\default';
